@@ -28,6 +28,14 @@ public class PlayerController : MonoBehaviour
         Attackable();
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(string.Compare(collision.gameObject.tag, "Item") == 0)
+        {
+            Destroy(collision.gameObject);
+        }
+    }
+
     private void Movement()
     {
         float inputX = Input.GetAxisRaw("Horizontal");           // 좌,우측 키보드 입력 (좌:-1, X:0, 우:+1)
@@ -90,7 +98,7 @@ public class PlayerController : MonoBehaviour
             // 존재한다면...
             if (enemy != null)
             {
-                enemy.OnDamaged();
+                enemy.OnDamaged(transform);             // 피격 당한 Enemy의 OnDamaged함수 호출. 나의 transform을 매게변수로 전달.
             }
         }
     }

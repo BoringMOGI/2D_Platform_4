@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public Transform eyePivot;
-    public LayerMask groundMask;
+    [Header("Control")]
+    public Transform eyePivot;    
     public Movement2D movement;
+    public LayerMask groundMask;
 
+    [Header("Item")]
     public GameObject dropItem;     // 드랍하는 아이템 오브젝트.
     public Transform dropPivot;     // 드랍하는 아이템의 생성 위치.
 
-    public bool isStop;
-    public bool isLeft;
+    bool isStop;
+    bool isLeft;
 
     public int hp;
 

@@ -5,10 +5,12 @@ using System.Linq;
 
 public class Movement2D : MonoBehaviour
 {
-    public Transform groundChecker;
-    public LayerMask groundMask;
-    public float groundDistance;
+    [Header("Ground")]
+    public Transform groundChecker;         // 땅 체크 기준점.
+    public LayerMask groundMask;            // 땅 체크 마스크.
+    public float groundRadius;              // 땅 체크 반지름.
 
+    [Header("Move")]
     public float moveSpeed;
     public float jumpPower;
 
@@ -37,11 +39,14 @@ public class Movement2D : MonoBehaviour
     private void GroundCheck()
     {
         if (rigid.velocity.y > 0)       // 나의 y축 물리 속도가 0보다 클 경우 (상승 중일 경우) 체크하지 않는다.
+        {
+            isGround = false;
             return;
+        }
 
-        // 광선과 충돌한 오브젝트의 정보가 담긴다.
-        RaycastHit2D hit = Physics2D.Raycast(groundChecker.position, Vector2.down, groundDistance, groundMask);
-        isGround = hit.collider != null;    // null이면 아무것도 충돌하지 않았다.
+        // 특정 지점 특정 반지름의 크기를 가진 원 안에서 충돌 감지.
+        Collider2D hit = Physics2D.OverlapCircle(groundChecker.position, groundRadius, groundMask);
+        isGround = (hit != null);    // null이면 아무것도 충돌하지 않았다.
         if (isGround)
         {
             jumpCount = 2;
@@ -86,7 +91,7 @@ public class Movement2D : MonoBehaviour
         if (groundChecker != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawRay(groundChecker.position, Vector2.down * groundDistance);
+            Gizmos.DrawWireSphere(groundChecker.position, groundRadius);
         }
     }
 

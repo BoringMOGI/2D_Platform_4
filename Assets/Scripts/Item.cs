@@ -28,14 +28,12 @@ public class Item
     }
     public Item(DataFormat.CSVData data, int index)
     {
-        Debug.Log(index);
-
         itemName = data.Get(index, "name");
         itemContent = data.Get(index, "content");
 
 
         string type = data.Get(index, "type");
-        string spritePath = string.Concat("Sprite/Item/", type);
+        string spritePath = string.Concat("Sprite/Item/", type).Trim();
 
         itemType = (ITEMTYPE)System.Enum.Parse(typeof(ITEMTYPE), type);
         itemSprite = Resources.Load<Sprite>(spritePath);

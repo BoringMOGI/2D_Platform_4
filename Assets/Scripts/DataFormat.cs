@@ -33,12 +33,6 @@ namespace DataFormat
 
         public string Get(int index, string key)
         {
-            Debug.Log("요청 : " + key + " length : " + key.Length);
-            foreach (string k in data[index].Keys)
-            {                
-                Debug.Log($"{k} == {key} : {k == key} : length : {k.Length}");
-            }
-
             return data[index][key];
         }
         public Dictionary<string, string>[] GetOriginData()
@@ -72,8 +66,10 @@ namespace DataFormat
 
                 // CSV 데이터의 첫 줄. 헤더 영역을 추출.
                 string[] header = textArray[0].Split(',');        // 쉼표(,)를 구분으로 데이터를 자른다. (key값)
+                for (int i = 0; i < header.Length; i++)
+                    header[i] = header[i].Trim();                 // 모든 공백 부분 제거.
 
-                for(int index = 1; index<textArray.Length; index++)
+                for (int index = 1; index<textArray.Length; index++)
                 {
                     if (string.IsNullOrEmpty(textArray[index]))
                         continue;

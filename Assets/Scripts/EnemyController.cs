@@ -5,13 +5,13 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     [Header("Control")]
-    public Transform eyePivot;    
-    public Movement2D movement;
-    public LayerMask groundMask;
+    [SerializeField] Transform eyePivot;    
+    [SerializeField] Movement2D movement;
+    [SerializeField] LayerMask groundMask;
 
     [Header("Item")]
-    public GameObject dropItem;     // 드랍하는 아이템 오브젝트.
-    public Transform dropPivot;     // 드랍하는 아이템의 생성 위치.
+    [SerializeField] Item.ITEMTYPE[] dropTable;     // 드랍하는 아이템의 종류.
+    [SerializeField] Transform dropPivot;           // 드랍하는 아이템의 생성 위치.
 
     bool isStop;
     bool isLeft;
@@ -111,9 +111,13 @@ public class EnemyController : MonoBehaviour
     {
         // Instance : 무언가를 즉석해서 만든다.
         // 무엇을? 어느 위치에? 회전 값은?
-        GameObject item = Instantiate(dropItem, dropPivot.position, Quaternion.identity);
-        Rigidbody2D itemRigid = item.GetComponent<Rigidbody2D>();
-        itemRigid.AddForce(Vector2.up * 3f, ForceMode2D.Impulse);
+        //GameObject item = Instantiate(dropItem, dropPivot.position, Quaternion.identity);
+        //Rigidbody2D itemRigid = item.GetComponent<Rigidbody2D>();
+        //itemRigid.AddForce(Vector2.up * 3f, ForceMode2D.Impulse);
+
+        // 아이템 매니저에게 특정 아이템을 요청한다.
+        ItemObject newItem = ItemManager.Instance.GetItemObject(dropTable.GetRandom());
+        newItem.transform.position = dropPivot.position;
 
         // Destroy : 무언가를 '삭제'하라.
         // gameObject : 나 자신 (내 오브젝트)

@@ -148,3 +148,13 @@ namespace DataFormat
         }
     }
 }
+
+public static class Method
+{
+    public static T GetRandom<T>(this T[] array)
+    {
+        System.Random random = new System.Random();
+        int index = random.Next(0, array.Length);
+        return array[index];
+    }
+}

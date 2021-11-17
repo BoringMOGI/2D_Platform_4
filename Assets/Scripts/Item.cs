@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 [System.Serializable]
@@ -31,8 +32,9 @@ public class Item
         itemName = data.Get(index, "name");
         itemContent = data.Get(index, "content");
 
-
         string type = data.Get(index, "type");
+
+        // string.Trim() : 공백 제거.
         string spritePath = string.Concat("Sprite/Item/", type).Trim();
 
         itemType = (ITEMTYPE)System.Enum.Parse(typeof(ITEMTYPE), type);

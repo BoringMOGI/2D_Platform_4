@@ -5,10 +5,21 @@ using DataFormat;
 
 public class ItemManager : MonoBehaviour
 {
-    [SerializeField] private Item[] items;
-    [SerializeField] private float power;
+    // 디자인 패턴 (Degisn Pattern)
+    //  - 싱글톤 패턴 (Singleton)
+    static ItemManager instance;
+    public static ItemManager Instance => instance;
 
+    [SerializeField] private ItemObject itemPrefab;
+    [SerializeField] private Item[] items;
+    
     private void Awake()
+    {
+        instance = this;
+    }
+
+    [ContextMenu("CSV/LoadItemData")]
+    public void LoadItemData()
     {
         CSVData data = CSV.ReadCSV("ItemData");
 
@@ -17,14 +28,21 @@ public class ItemManager : MonoBehaviour
             items[i] = new Item(data, i);       // 각 item변수에 데이터 할당.
     }
 
-    private void Start()
+    // ItemObject를 요청하는 함수.
+    public ItemObject GetItemObject(Item.ITEMTYPE type)
     {
-        
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i].itemType == type)
+            {
+                ItemObject newItem = Instantiate(itemPrefab);       // 프리팹 클론 생성.
+                newItem.Setup(items[i]);                            // items[i]의 데이터 전달. 초기화.
+
+                return newItem;                                     // 해당 아이템 오브젝트 리턴.
+            }
+        }
+
+        return null;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

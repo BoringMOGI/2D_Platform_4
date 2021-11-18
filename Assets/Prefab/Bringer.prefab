@@ -73,8 +73,8 @@ GameObject:
   - component: {fileID: 5119838153760658853}
   - component: {fileID: 5119838153760658852}
   - component: {fileID: 5119838153760658855}
-  - component: {fileID: 5119838153760658849}
   - component: {fileID: 5119838153760658848}
+  - component: {fileID: 454958946}
   m_Layer: 8
   m_Name: Bringer
   m_TagString: Untagged
@@ -89,13 +89,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5119838153760658854}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.14, y: -2.79, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5119838153613502577}
   - {fileID: 5119838152844731456}
   - {fileID: 5119838154661154104}
+  - {fileID: 2206259753918982739}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -206,26 +207,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0.6}
   m_Size: {x: 0.5, y: 1.2}
   m_Direction: 0
---- !u!114 &5119838153760658849
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5119838153760658854}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 544990cd7ac30d94fac9bdc5f127401f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  eyePivot: {fileID: 5119838152844731456}
-  movement: {fileID: 5119838153760658848}
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 64
-  dropTable: 000000000100000004000000
-  dropPivot: {fileID: 5119838154661154104}
-  hp: 1
 --- !u!114 &5119838153760658848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,6 +226,28 @@ MonoBehaviour:
   groundRadius: 0
   moveSpeed: 1
   jumpPower: 5
+--- !u!114 &454958946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5119838153760658854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19b8a180d21570c4a9dede338dfdc00a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eyePivot: {fileID: 5119838152844731456}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 64
+  combetPivot: {fileID: 2206259753918982739}
+  combetMask:
+    serializedVersion: 2
+    m_Bits: 128
+  combetRadius: 0.7
+  combetPower: 1
 --- !u!1 &5119838154661154107
 GameObject:
   m_ObjectHideFlags: 0
@@ -274,4 +277,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5119838153760658851}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &9114434195557497640
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2206259753918982739}
+  m_Layer: 8
+  m_Name: CombetPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2206259753918982739
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9114434195557497640}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.104, y: 0.61, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5119838153760658851}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

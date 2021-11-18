@@ -18,5 +18,10 @@ public class PlayerInfoUI : MonoBehaviour
     {
         playerText.text = name;
     }
+    public void SetHp(float current, float max)
+    {
+        hpImage.fillAmount = current / max;
+        hpText.text = string.Format("{0}/{1}", current, max);
+    }
 
 }

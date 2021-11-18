@@ -21,6 +21,8 @@ public class Movement2D : MonoBehaviour
     bool isGround;                     // 내가 땅 위에 서 있는지 여부.
     int jumpCount;                     // 연속 점프 가능 횟수.
 
+    public bool IsGround => isGround;
+
     // 게임 실행 시(혹은 오브젝트 활성화 시) 최초 1회 실행되는 유니티 이벤트 함수.
     void Start()
     {

@@ -4,26 +4,37 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public Movement2D movement;
-    public Transform weaponPivot;       // 무기의 중심점.
-    public float weaponRadius;          // 무기의 범위.
-    public float weaponOffset;          // 무기의 거리.
-    public LayerMask weaponMask;
+    [SerializeField] PlayerInfoUI infoUI;       // 플레이어 상태 UI.
+    [SerializeField] Transform weaponPivot;     // 무기의 중심점.
+    [SerializeField] float weaponRadius;        // 무기의 범위.
+    [SerializeField] LayerMask weaponMask;      // 공격 마스크.
 
-    Animator anim;
-    bool isLeft;
-    bool isAttack;                      // 공격 중인가?
+    private Movement2D movement;                // 이동 클래스.
+    private Stateable stat;                     // 상태.
+    private Animator anim;                      // 애니메이터.
+    private Rigidbody2D rigid;
 
-    float comboResetTime = 0.0f;        //  
-    int attackCombo = 0;                // 공격 콤보.
+    private bool isLeft;
+    private bool isAttack;                      // 공격 중인가?
+    private bool isStopControl;                 // 조작 중지.
+
+    private float comboResetTime = 0.0f;        // 콤보 초기화 시간.
+    private int attackCombo = 0;                // 공격 콤보.
 
     private void Start()
     {
+        movement = GetComponent<Movement2D>();
         anim = GetComponent<Animator>();
+        stat = GetComponent<Stateable>();
+        rigid = GetComponent<Rigidbody2D>();
+
         StartCoroutine(ResetCombo());
     }
     void Update()
     {
+        if (isStopControl)
+            return;
+
         Movement();
         Attackable();
     }
@@ -41,8 +52,46 @@ public class PlayerController : MonoBehaviour
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
-        
+
     }
+
+
+    public void OnDamaged(Transform attacker, float amount)
+    {
+        stat.hp = Mathf.Clamp(stat.hp - amount, 0, stat.MAX_HP);    // 체력 감소 후 최소, 최대치 사이값을 반환.
+        infoUI.SetHp(stat.hp, stat.MAX_HP);
+
+        if(stat.IsAlive == false)
+        {
+            OnDead();
+        }
+        else
+        {
+            StartCoroutine(OnDamagedEffect(attacker));
+        }
+    }
+    private IEnumerator OnDamagedEffect(Transform attacker)
+    {
+        // 날아가야할 방향 계산.
+        bool isForceLeft = transform.position.x < attacker.position.x;
+        Vector2 vector = isForceLeft ? Vector2.left : Vector2.right;
+        vector += Vector2.up;
+
+        rigid.AddForce(vector * 4f, ForceMode2D.Impulse);           // 물리적인 힘 적용.
+        isStopControl = true;                                       // 컨트롤러 중단.
+
+        while(true)
+        {
+            if (movement.IsGround && rigid.velocity.y <= 0)         // 수직 속도가 음수이면서 IsGround가 true일 경우 종료.
+                break;
+
+            yield return null;
+        }
+
+        isStopControl = false;                                      // 컨트롤러 중단 해제.
+    }
+
+
 
     private void Movement()
     {
@@ -113,6 +162,10 @@ public class PlayerController : MonoBehaviour
     private void OnEndAttack()
     {
         isAttack = false;
+    }
+    private void OnDead()
+    {
+
     }
 
     // private void OnDrawGizmos()

@@ -9,13 +9,21 @@ public class EnemyController : MonoBehaviour
     [SerializeField] Movement2D movement;
     [SerializeField] LayerMask groundMask;
 
+    [Header("Combet")]
+    [SerializeField] Transform combetPivot;         // 탐색 거리.
+    [SerializeField] LayerMask combetMask;          // 전투 대상 마스크.
+    [SerializeField] float combetRadius;            // 공격 범위.
+    [SerializeField] float combetPower;             // 공격력.
+
     [Header("Item")]
-    [SerializeField] Item.ITEMTYPE[] dropTable;     // 드랍하는 아이템의 종류.
     [SerializeField] Transform dropPivot;           // 드랍하는 아이템의 생성 위치.
+    [SerializeField] Item.ITEMTYPE[] dropTable;     // 드랍하는 아이템의 종류.
 
     bool isStop;
     bool isLeft;
+    bool isAttack;          // 공격 중인가?
 
+    
     public int hp;
 
     // 프로퍼티(Property)
@@ -44,28 +52,67 @@ public class EnemyController : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
-    void Update()
+    private void Update()
     {
         // 만약 isStop이 false면 함수를 종료하라.
-        if (isStop || !isAlive)
+        if (isStop || !isAlive || isAttack)
             return;
 
+        Movement();
+        Search();
+    }
+
+    private void Movement()
+    {
         movement.Move(isLeft ? -1 : 1, true);
 
         // eyePivot위치에서 왼,오르쪽으로 1의 길이만큼 레이를 발사.
         RaycastHit2D hit = Physics2D.Raycast(eyePivot.position, isLeft ? Vector2.left : Vector2.right, 1.0f, groundMask);
-        if(hit.collider != null)        // 만약 무언가 충돌했다면
+        if (hit.collider != null)        // 만약 무언가 충돌했다면
         {
             isLeft = !isLeft;           // 방향을 반대로 돌린다.
         }
 
         // 낭떨어지 체크.
         hit = Physics2D.Raycast(eyePivot.position + (isLeft ? Vector3.left : Vector3.right) * 1.0f, Vector2.down, 2.0f, groundMask);
-        if(hit.collider == null)
+        if (hit.collider == null)
         {
             isLeft = !isLeft;
         }
+
+        // 공격 범위 좌,우 수정.
+        Vector3 pivot = combetPivot.localPosition;           // 로컬 좌표를 대입한다. 
+        pivot.x = Mathf.Abs(pivot.x) * (isLeft ? -1f : 1f);  // 해당 좌표의 x값을 갱신한다. (Mathf.Abs(float) : 절대값)
+        combetPivot.localPosition = pivot;                   // 수정된 좌표를 combetPivot에 대입.
     }
+    private void Search()
+    {
+        // 탐지를 위해 Circle범위 만큼 체크.
+        Collider2D collider = Physics2D.OverlapCircle(combetPivot.position, combetRadius, combetMask);
+        if(collider != null)
+        {
+            anim.SetTrigger("Attack");                  // Attack 트리거 작동.
+            movement.Move(0);                           // 이동 멈추기.
+            isAttack = true;                            // 공격 상태.
+            Invoke("OnResetAttack", 2.0f);              // n초가 흐른 뒤 초기화.
+        }
+    }
+
+    private void OnAttack()
+    {
+        // 이벤트 함수, 애니메이션에서 특정 프레임에 호출.
+        Collider2D collider = Physics2D.OverlapCircle(combetPivot.position, combetRadius, combetMask);
+        if (collider != null)
+        {
+            PlayerController player = collider.GetComponent<PlayerController>();
+            player.OnDamaged(transform, combetPower);
+        }
+    }
+    private void OnResetAttack()
+    {
+        isAttack = false;
+    }
+
 
     public void OnDamaged(Transform attacker)
     {
@@ -124,14 +171,22 @@ public class EnemyController : MonoBehaviour
         Destroy(gameObject);
     }
 
-
     private void OnDrawGizmosSelected()
     {
         if (eyePivot != null)
         {
+            // 탐지 범위.
             Gizmos.color = Color.red;
             Gizmos.DrawRay(eyePivot.position, (isLeft ? Vector2.left : Vector2.right) * 1.0f);
-            Gizmos.DrawRay(eyePivot.position + (isLeft ? Vector3.left : Vector3.right) * 1.0f, Vector2.down * 2.0f);
+            Gizmos.DrawRay(eyePivot.position + (isLeft ? Vector3.left : Vector3.right) * 1.0f, Vector2.down * 2.0f);                        
         }
+
+        if(combetPivot != null)
+        {
+            // 공격 범위.
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(combetPivot.position, combetRadius);
+        }
+
     }
 }
